@@ -63,10 +63,10 @@ class LimerickDetector:
         pronunciation, take the shorter one.  If there is no entry in the
         dictionary, return 1.
         """
-        prondict = nltk.corpus.cmudict.dict()
+        prondict = self._pronunciations
         if word in prondict:
             syll_cnt = []
-	    vowels = {'a','e','i','o','u','A','E','I','O','U'}
+            vowels = {'a','e','i','o','u','A','E','I','O','U'}
             syll_list = prondict[word]
             # Count syllables in each list here.
             for item in syll_list:
@@ -79,17 +79,22 @@ class LimerickDetector:
         else:
             return 1
         # TODO: provide an implementation!
-    def rhym_help(a,b):
+
+
+    def rhym_help(self, a, b):
         vowels = {'a','e','i','o','u','A','E','I','O','U'}
         a_suf = []
         b_suf = []
         for idx,val in enumerate(a):
             if val[0] in vowels:
                 a_suf = a[idx:]
+                break
         for idx,val in enumerate(b):
             if val[0] in vowels:
                 b_suf = b[idx:]
-
+                break
+        #print(a_suf)
+        #print(b_suf)
         a_str = "".join(a_suf)
         b_str = "".join(b_suf)
 
@@ -98,16 +103,18 @@ class LimerickDetector:
 
         return False
 
+
     def rhymes(self, a, b):
         """
         Returns True if two words (represented as lower-case strings) rhyme,
         False otherwise.
         """
-        prondict = nltk.corpus.cmudict.dict()
+        prondict = self._pronunciations
         if a in prondict and b in prondict:
             for phoa in prondict[a]:
                 for phob in prondict[b]:
-                    is_rhyme = rhym_help(phoa,phob)
+                    #print(phoa," kaushal ",phob)
+                    is_rhyme = self.rhym_help(phoa,phob)
                     if is_rhyme:
                         return True
         # TODO: provide an implementation!
@@ -135,12 +142,20 @@ class LimerickDetector:
         we're using here.)
 
         """
-        lines = text.splitlines()
-        if(len(lines) != 5):
+        lines = text.split('\n')
+        length = len(lines)
+        if not lines[length-1].strip():
+            del lines[length-1]
+            length -= 1
+        if not lines[0].strip():
+            length -= 1
+            del lines[0]
+        print(length)
+        if(length != 5):
             return False
 
         a = [lines[0], lines[1], lines[4]]
-        b = [lines[2] lines[3]]
+        b = [lines[2], lines[3]]
 
         a_syl_cnt = []
         b_syl_cnt = []
@@ -148,46 +163,48 @@ class LimerickDetector:
         b_last = []
         punct = {',','!','.','?',';',':','"',"'"}
         for item in a:
-            tokens = nltk.tokenizer.word_tokenize(item.lower())
+            tokens = nltk.tokenize.word_tokenize(item.lower())
             syl_cnt = 0
             lw = ""
             for token in tokens:
                 if token not in punct:
-                    syl_cnt += num_syllables(token)
+                    syl_cnt += self.num_syllables(token)
                     lw = token
             a_last.append(lw)
             a_syl_cnt.append(syl_cnt)
 
         for item in b:
-            tokens = nltk.tokenizer.word_tokenize(item.lower())
+            tokens = nltk.tokenize.word_tokenize(item.lower())
             syl_cnt = 0
             lw = ""
             for token in tokens:
                 if token not in punct:
-                    syl_cnt += num_syllables(token)
+                    syl_cnt += self.num_syllables(token)
                     lw = token
             b_syl_cnt.append(syl_cnt)
             b_last.append(lw)
 
-
+        print(a_syl_cnt,"a_syl_cnt  ",a_last," a_last")
+        print(b_syl_cnt,"b_syl_cnt  ",b_last," b_last")
+        
         min_a = 1000000;
         for i in range(0,2):
             for j in range(i+1,3):
                 min_a = min(min_a,a_syl_cnt[i],a_syl_cnt[j])
                 if a_syl_cnt[i] <4 or a_syl_cnt[j]<4 or abs(a_syl_cnt[i]-a_syl_cnt[j])>2:
                     return False
-                if not rhymes(a_last[i],a_last[j]):
+                if not self.rhymes(a_last[i], a_last[j]):
                     return False
         # TODO: provide an implementation!
 
         if b_syl_cnt[0] <4 or b_syl_cnt[1]<4 or abs(b_syl_cnt[0]-b_syl_cnt[1])>2 or max(b_syl_cnt[0],b_syl_cnt[1])>min_a:
             return False
 
-        if not rhymes(b_last[0],b_last[1]):
+        if not self.rhymes( b_last[0], b_last[1]):
             return False
         for item_a in a_last:
             for item_b in b_last:
-                if rhymes(item_a,item_b):
+                if self.rhymes( item_a, item_b):
                     return False
 
         return True
