@@ -40,7 +40,7 @@ class TestSequenceFunctions(unittest.TestCase):
         #print(trace(self.f2,st))
         print '\nNumber of failed truncation tests:', str(len(s))
         if len(s)!=0: print 'Failed truncation tests:', ','.join([str(x) for x in s])
-'''
+
     def test_padding(self):
         s = []
         try: self.assertEqual("".join(self.f3.transduce(x for x in "3")), "300")
@@ -49,7 +49,7 @@ class TestSequenceFunctions(unittest.TestCase):
         except: s.append(2)
         try: self.assertEqual("".join(self.f3.transduce(x for x in "c111")), "c111")
         except: s.append(3)
-
+        print(trace(self.f3,['3','','','']))
         print '\nNumber of failed padding tests:', str(len(s))
         if len(s)!=0: print 'Failed padding tests:', ','.join([str(x) for x in s])
 
@@ -74,7 +74,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         print '\nNumber of failed numbers tests:', str(len(s))
         if len(s)!=0: print 'Failed numbers tests:', ','.join([str(x) for x in s])
-
+'''
     def test_morphology(self):
         s = []
         try: self.assertEqual(generate("pack+s"), "packs")

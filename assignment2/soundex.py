@@ -100,6 +100,34 @@ def add_zero_padding():
     # Now, the third fst - the zero-padding fst
     f3 = FST('soundex-padzero')
 
+    f3.add_state('start')
+    f3.initial_state = 'start'
+    for x in range(4):
+        f3.add_state(str(x))
+    f3.set_final(str(3))
+
+    # Add the arcs
+    f3.add_arc(str(0),str(1),(''),('0'))
+    f3.add_arc('start','1',(''),('0'))
+    f3.add_arc(str(1),str(2),(''),('0'))
+    f3.add_arc(str(2),str(3),(''),('0'))
+
+    for letter in string.letters:
+        f3.add_arc('start', '0', (letter), (letter))
+
+    for n in range(10):
+        f3.add_arc('start','1',(str(n)),(str(n)))
+    
+
+    for x in range(3):
+        for n in range(10):
+            f3.add_arc(str(x), str(x+1), (str(n)), (str(n)))
+        
+
+    for n in range(10):
+        f3.add_arc(str(3),str(3),(str(n)),())
+
+    '''
     f3.add_state('1')
     f3.add_state('1a')
     f3.add_state('1b')
@@ -116,6 +144,7 @@ def add_zero_padding():
     f3.add_arc('1', '1a', (), ('0'))
     f3.add_arc('1a', '1b', (), ('0'))
     f3.add_arc('1b', '2', (), ('0'))
+    '''
     return f3
 
     # The above code adds zeroes but doesn't have any padding logic. Add some!
@@ -128,4 +157,3 @@ if __name__ == '__main__':
 
     if user_input:
         print("%s -> %s" % (user_input, composechars(tuple(user_input), f1, f2, f3)))
-        print(trace(f2,tuple(user_input)))
