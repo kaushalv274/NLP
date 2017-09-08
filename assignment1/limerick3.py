@@ -64,10 +64,12 @@ class LimerickDetector:
         dictionary, return 1.
         """
         prondict = self._pronunciations
+        word = word.lower().strip()
         if word in prondict:
             syll_cnt = []
             vowels = {'a','e','i','o','u','A','E','I','O','U'}
             syll_list = prondict[word]
+            #print(syll_list)
             # Count syllables in each list here.
             for item in syll_list:
                 cnt = 0;
@@ -78,7 +80,6 @@ class LimerickDetector:
             return min(syll_cnt)
         else:
             return 1
-        # TODO: provide an implementation!
 
 
     def rhym_help(self, a, b):
@@ -109,6 +110,8 @@ class LimerickDetector:
         Returns True if two words (represented as lower-case strings) rhyme,
         False otherwise.
         """
+        a = a.lower().strip()
+        b = b.lower().strip()
         prondict = self._pronunciations
         if a in prondict and b in prondict:
             for phoa in prondict[a]:
@@ -117,7 +120,6 @@ class LimerickDetector:
                     is_rhyme = self.rhym_help(phoa,phob)
                     if is_rhyme:
                         return True
-        # TODO: provide an implementation!
 
         return False
 
@@ -150,7 +152,7 @@ class LimerickDetector:
         if not lines[0].strip():
             length -= 1
             del lines[0]
-        print(length)
+        #print(length)
         if(length != 5):
             return False
 
@@ -169,6 +171,7 @@ class LimerickDetector:
             for token in tokens:
                 if token not in punct:
                     syl_cnt += self.num_syllables(token)
+                    #print(token," token is ",self.num_syllables(token), "  count is")
                     lw = token
             a_last.append(lw)
             a_syl_cnt.append(syl_cnt)
@@ -180,12 +183,13 @@ class LimerickDetector:
             for token in tokens:
                 if token not in punct:
                     syl_cnt += self.num_syllables(token)
+                    #print(token," token is ",self.num_syllables(token), "  count is")
                     lw = token
             b_syl_cnt.append(syl_cnt)
             b_last.append(lw)
 
-        print(a_syl_cnt,"a_syl_cnt  ",a_last," a_last")
-        print(b_syl_cnt,"b_syl_cnt  ",b_last," b_last")
+        #print(a_syl_cnt,"a_syl_cnt  ",a_last," a_last")
+        #print(b_syl_cnt,"b_syl_cnt  ",b_last," b_last")
         
         min_a = 1000000;
         for i in range(0,2):
@@ -195,7 +199,8 @@ class LimerickDetector:
                     return False
                 if not self.rhymes(a_last[i], a_last[j]):
                     return False
-        # TODO: provide an implementation!
+
+
 
         if b_syl_cnt[0] <4 or b_syl_cnt[1]<4 or abs(b_syl_cnt[0]-b_syl_cnt[1])>2 or max(b_syl_cnt[0],b_syl_cnt[1])>min_a:
             return False
