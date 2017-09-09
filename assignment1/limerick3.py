@@ -214,7 +214,26 @@ class LimerickDetector:
 
         return True
 
+    def guess_syllables(s):
+        word = s.lower().strip()
+        vowels = {'a','e','i','o','u'}
+        last = ''
+        cnt = 0
+        for item in list(word):
+            if item in vowels:
+                if not (last in vowels):
+                    cnt += 1
+            last = item
+        return cnt
 
+    def apostrophe_tokenize(s):
+        sen = s.lower().strip()
+        ss = {'.','?',':',',',';'}
+
+        for item in ss:
+            sen = sen.replace(item,'')
+
+        return sen.split()
 # The code below should not need to be modified
 def main():
   parser = argparse.ArgumentParser(description="limerick detector. Given a file containing a poem, indicate whether that poem is a limerick or not",
