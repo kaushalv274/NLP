@@ -74,7 +74,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
         print '\nNumber of failed numbers tests:', str(len(s))
         if len(s)!=0: print 'Failed numbers tests:', ','.join([str(x) for x in s])
-'''
+
     def test_morphology(self):
         s = []
         try: self.assertEqual(generate("pack+s"), "packs")
@@ -96,6 +96,6 @@ class TestSequenceFunctions(unittest.TestCase):
 
         print '\nNumber of failed morphology tests:', str(len(s))
         if len(s)!=0: print 'Failed morphology tests:', ','.join([str(x) for x in s])
-'''
+
 if __name__ == '__main__':
     unittest.main()

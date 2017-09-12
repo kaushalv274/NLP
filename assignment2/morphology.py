@@ -17,6 +17,7 @@ def iterateRules():
     # and "_c+ing" to a version with "ck" instead, so long as "_" is a
     # vowel.
     #
+    yield("(.*.[aeiou])c\+(.*)","\\1ck\\2")
     # e.g. "traffic+ing" -> "trafficking" (here '_' is an i)
     #      "lilac+ing" -> "lilacking" (here '_' is an a)
     # if you need help with python regular expressions, see:
