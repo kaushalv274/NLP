@@ -42,9 +42,9 @@ def french_count():
     f.add_arc('start','onez',('0'),())
     for x in range(1,10):
         if x == 1:
-            f.add_arc('start','onenz',(str(x)),['cent'])
+            f.add_arc('start','onenz',(str(x)),[kFRENCH_TRANS[100]])
         else:
-            f.add_arc('start','onenz',(str(x)),[kFRENCH_TRANS[x]+" "+'cent'])
+            f.add_arc('start','onenz',(str(x)),[kFRENCH_TRANS[x]+" "+kFRENCH_TRANS[100]])
     f.add_arc('onez','twoz',('0'),())
 
 
@@ -65,7 +65,7 @@ def french_count():
 
     f.add_arc('twoz','threez',('0'),['zero'])
     for x in range(1,9):
-        f.add_arc('twoz','threenz1',(str(x)),kFRENCH_TRANS[x])
+        f.add_arc('twoz','threenz1',(str(x)),[kFRENCH_TRANS[x]])
 
     lst = [0,8]
     for ele in lst:
@@ -105,4 +105,4 @@ if __name__ == '__main__':
     if string_input:
         print user_input, '-->',
         print " ".join(f.transduce(prepare_input(user_input)))
-        print trace(f,'001')
+        #print trace(f,'001')

@@ -49,7 +49,7 @@ class TestSequenceFunctions(unittest.TestCase):
         except: s.append(2)
         try: self.assertEqual("".join(self.f3.transduce(x for x in "c111")), "c111")
         except: s.append(3)
-        print(trace(self.f3,['3','','','']))
+        #print(trace(self.f3,['3','','','']))
         print '\nNumber of failed padding tests:', str(len(s))
         if len(s)!=0: print 'Failed padding tests:', ','.join([str(x) for x in s])
 
