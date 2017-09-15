@@ -31,19 +31,11 @@ def letters_to_numbers():
 
     all_lists = [list_0,list_1,list_2,list_3,list_4,list_5,list_6]
     # Set all the final states
-    f1.set_final('next')
-
-    # Add the rest of the arcs
-    for letter in string.ascii_lowercase:
-        f1.add_arc('start', 'next', (letter), (letter))
-        #f1.add_arc('next', 'next', (letter), ('0'))
 
     for index,item in enumerate(all_lists):
         for letter in item:
-            if index == 0:
-                f1.add_arc('next',str(index),(letter),())
-            else:
-                f1.add_arc('next',str(index),(letter),(str(index)))
+            f1.add_arc('start',str(index),(letter),(letter))
+            f1.add_arc('start',str(index),(letter.upper()),(letter.upper()))
 
 
     for x in range(0,7):
@@ -51,10 +43,13 @@ def letters_to_numbers():
             for letter in item:
                 if x == index:
                     f1.add_arc(str(x),str(index),(letter),())
+                    f1.add_arc(str(x),str(index),(letter.upper()),())
                 elif index == 0:
                     f1.add_arc(str(x),str(index),(letter),())
+                    f1.add_arc(str(x),str(index),(letter.upper()),())
                 else:
                     f1.add_arc(str(x),str(index),(letter),(str(index)))
+                    f1.add_arc(str(x),str(index),(letter.upper()),(str(index)))
 
     return f1
 
