@@ -30,21 +30,25 @@ class FeatureExtractor:
 
     def features(self, text):
         d = defaultdict(int)
+        set = {',','.','!','"',"'",':'}
         tokens = kTOKENIZER.tokenize(text)
         for ii in tokens:
             d[morphy_stem(ii)] += 1
+        tags = nltk.pos_tag(tokens)
+        tags_len = len(tags)
         le = len(tokens)
         d['length'] = le
-        d['signs'] = tokens.count(',') + tokens.count(';') + tokens.count('"') + tokens.count('.') + tokens.count("'")
+        #d['signs'] = tokens.count(',') + tokens.count(';') + tokens.count('"') + tokens.count('.') + tokens.count("'")
+        for idx,ele in enumerate(text):
+            if idx < len(text)-1:
+                d[text[idx:idx+1]] += 1
+        for ele in text:
+            d[ele] +=1
         '''
         for idx,ele in enumerate(l):
             if idx < (le-1):
                 d[morphy_stem(l[idx])+' '+morphy_stem(l[idx+1])] += 1
-        for idx,ele in enumerate(l):
-            if idx < (le-2):
-                d[morphy_stem(l[idx])+' '+morphy_stem(l[idx+1])+' '+morphy_stem(l[idx+2])] += 1
         '''
-
         return d
 reader = codecs.getreader('utf8')
 writer = codecs.getwriter('utf8')
