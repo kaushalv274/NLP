@@ -32,22 +32,27 @@ class FeatureExtractor:
         d = defaultdict(int)
         set = {',','.','!','"',"'",':'}
         tokens = kTOKENIZER.tokenize(text)
-        for ii in tokens:
-            d[morphy_stem(ii)] += 1
+
+        #for ii in tokens:
+            #d[morphy_stem(ii)] += 1
+        
         tags = nltk.pos_tag(tokens)
         tags_len = len(tags)
         le = len(tokens)
         d['length'] = le
-        #d['signs'] = tokens.count(',') + tokens.count(';') + tokens.count('"') + tokens.count('.') + tokens.count("'")
+	
         for idx,ele in enumerate(text):
             if idx < len(text)-1:
-                d[text[idx:idx+1]] += 1
-        for ele in text:
-            d[ele] +=1
+                d[ele] += 2
+	
+        d[text[len(text)-1]] += 3
         '''
-        for idx,ele in enumerate(l):
-            if idx < (le-1):
-                d[morphy_stem(l[idx])+' '+morphy_stem(l[idx+1])] += 1
+        for idx,ele in enumerate(tokens):
+            if idx < (len(tokens)-1):
+                d[morphy_stem(tokens[idx])+' '+morphy_stem(tokens[idx+1])] +=1
+        for idx,ele in enumerate(tokens):
+            if idx < (len(tokens)-2):
+                d[morphy_stem(tokens[idx])+' '+morphy_stem(tokens[idx+1])+' '+morphy_stem(tokens[idx+2])] += 1
         '''
         return d
 reader = codecs.getreader('utf8')
@@ -110,13 +115,15 @@ if __name__ == "__main__":
     # Train a classifier
     sys.stderr.write("Training classifier ...\n")
     classifier = nltk.classify.NaiveBayesClassifier.train(dev_train)
-
+    #classifier.show_most_informative_features(50)
     right = 0
     total = len(dev_test)
     for ii in dev_test:
         prediction = classifier.classify(ii[0])
         if prediction == ii[1]:
             right += 1
+        else:
+            print ii[0]
     sys.stderr.write("Accuracy on dev: %f\n" % (float(right) / float(total)))
 
     if testfile is None:
