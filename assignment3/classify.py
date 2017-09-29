@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from collections import defaultdict
 from csv import DictReader, DictWriter
-
+import string
 import nltk
 import codecs
 import sys
@@ -22,38 +22,52 @@ def morphy_stem(word):
 
 class FeatureExtractor:
     def __init__(self):
-        """
-        You may want to add code here
-        """
 
         None
 
     def features(self, text):
         d = defaultdict(int)
-        set = {',','.','!','"',"'",':'}
-        tokens = kTOKENIZER.tokenize(text)
-
-        #for ii in tokens:
-            #d[morphy_stem(ii)] += 1
-        
+        st = text.strip().lower()
+        #print text
+        tt = st.translate(None,string.punctuation)
+        tokens = kTOKENIZER.tokenize(tt)
         tags = nltk.pos_tag(tokens)
-        tags_len = len(tags)
+        #print text
+
+        #print text[-1]
         le = len(tokens)
         d['length'] = le
-	
-        for idx,ele in enumerate(text):
-            if idx < len(text)-1:
-                d[ele] += 2
-	
-        d[text[len(text)-1]] += 3
-        '''
+        d['char_length'] = len(tt)
+        for ele in tokens:
+            d[ele] +=1
+        # for ele in tt:
+        #     d[ele] +=1
+        # temp = ''.join(tt.split())
+        # for idx,ele in enumerate(temp):
+        #     if idx < len(temp)-1:
+        #         d[temp[idx:idx+2]] += 1
+
+        # for idx,ele in enumerate(tt):
+        #     if idx < len(tt)-2:
+        #         d[ele[idx:idx+3]] += 1
+
+        # for idx,ele in enumerate(tags):
+        #     if idx < len(tags):
+        #         d[tags[idx][1]] +=1
+        d['startswith'] = tags[0]
+        d['endswith'] = tags[-1]
+        # for ele in tokens:
+	       #  d[len(ele)] +=1
+        
+        # for idx,ele in enumerate(tokens):
+        #     if idx < (len(tokens)-2):
+        #         d[morphy_stem(tokens[idx])+' '+morphy_stem(tokens[idx+1])+' '+morphy_stem(tokens[idx+2])] += 1
         for idx,ele in enumerate(tokens):
             if idx < (len(tokens)-1):
                 d[morphy_stem(tokens[idx])+' '+morphy_stem(tokens[idx+1])] +=1
-        for idx,ele in enumerate(tokens):
-            if idx < (len(tokens)-2):
-                d[morphy_stem(tokens[idx])+' '+morphy_stem(tokens[idx+1])+' '+morphy_stem(tokens[idx+2])] += 1
-        '''
+        # for idx,ele in enumerate(tokens):
+        #     if idx < (len(tokens)-3):
+        #         d[morphy_stem(tokens[idx])+' '+morphy_stem(tokens[idx+1])+' '+morphy_stem(tokens[idx+2])+' '+morphy_stem(tokens[idx+3])] +=1
         return d
 reader = codecs.getreader('utf8')
 writer = codecs.getwriter('utf8')
@@ -115,15 +129,13 @@ if __name__ == "__main__":
     # Train a classifier
     sys.stderr.write("Training classifier ...\n")
     classifier = nltk.classify.NaiveBayesClassifier.train(dev_train)
-    #classifier.show_most_informative_features(50)
+    classifier.show_most_informative_features(10)
     right = 0
     total = len(dev_test)
     for ii in dev_test:
         prediction = classifier.classify(ii[0])
         if prediction == ii[1]:
             right += 1
-        else:
-            print ii[0]
     sys.stderr.write("Accuracy on dev: %f\n" % (float(right) / float(total)))
 
     if testfile is None:
