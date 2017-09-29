@@ -7,6 +7,7 @@ import codecs
 import sys
 from nltk.corpus import wordnet as wn
 from nltk.tokenize import TreebankWordTokenizer
+from collections import Counter
 
 kTOKENIZER = TreebankWordTokenizer()
 
@@ -51,13 +52,31 @@ class FeatureExtractor:
         #     if idx < len(tt)-2:
         #         d[ele[idx:idx+3]] += 1
 
-        # for idx,ele in enumerate(tags):
-        #     if idx < len(tags):
+        #for idx,ele in enumerate(tags):
+        #    if idx < len(tags):
         #         d[tags[idx][1]] +=1
+            #print ele[1],
+            #pass
+        #print 
         d['startswith'] = tags[0]
         d['endswith'] = tags[-1]
+        # d['len_first_token'] = len(tokens[0])
+        d['len_last_token'] = len(tokens[-1])
+        # maxi =0
+        # max_tag = ''
+        # tag_dic = Counter([x[1] for x in tags])
+        # for key,value in tag_dic.iteritems():
+        #     if value > maxi:
+        #         max_tag = key
+        #         maxi = value
+        # d['max_tag'] = max_tag
+
         # for ele in tokens:
 	       #  d[len(ele)] +=1
+        # sum = 0
+        # for ele in tokens:
+        #     sum += len(ele)
+        # d['avg_len'] = sum / len(tokens)
         
         # for idx,ele in enumerate(tokens):
         #     if idx < (len(tokens)-2):
@@ -129,7 +148,7 @@ if __name__ == "__main__":
     # Train a classifier
     sys.stderr.write("Training classifier ...\n")
     classifier = nltk.classify.NaiveBayesClassifier.train(dev_train)
-    classifier.show_most_informative_features(10)
+    #classifier.show_most_informative_features(10)
     right = 0
     total = len(dev_test)
     for ii in dev_test:
