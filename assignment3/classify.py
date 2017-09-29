@@ -58,10 +58,11 @@ class FeatureExtractor:
             #print ele[1],
             #pass
         #print 
-        d['startswith'] = tags[0]
-        d['endswith'] = tags[-1]
+        d['startswith'] = tags[0][1]
+        d['endswith'] = tags[-1][1]
         # d['len_first_token'] = len(tokens[0])
         d['len_last_token'] = len(tokens[-1])
+        d['last_char'] = tt[-1]
         # maxi =0
         # max_tag = ''
         # tag_dic = Counter([x[1] for x in tags])
