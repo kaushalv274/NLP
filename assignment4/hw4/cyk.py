@@ -7,18 +7,21 @@ from nltk.tokenize import TreebankWordTokenizer
 import json
 from tree import Node
 from tree import Tree
+import timeit
+import numpy as np
+import matplotlib.pyplot as plt
+import math
 
-def func():
-	d = json.load(open("d.txt"))
-	rev_d = json.load(open("rd.txt"))
+def func(sen_size,time):
+	d = json.load(open("d.text"))
+	rev_d = json.load(open("rd.text"))
+	out_file = open("parse_out.txt",'w')
 	kTOKENIZER = TreebankWordTokenizer()
 
 	for line in fileinput.input():
 		tokens = kTOKENIZER.tokenize(line)
 
-		'''
-		Play with tokens here
-		'''
+
 		n = len(tokens)
 		#d  //Dictionary which contains production rule A -> BC and A -> literal and their log probability
 		#rev_d  // This dictionary contains reverse production rules. BC -> A and literal -> A with probability
@@ -29,11 +32,10 @@ def func():
 			if token not in rev_d:
 				tokens[index] = '<unk>'
 
-
+		start_time = timeit.default_timer()         
 		for index,token in enumerate(tokens):
 			j = index
 			temp_dict = rev_d[token]
-			print token
 			for k,v in temp_dict.iteritems():
 				dd[j][j][k] = v
 				back[j][j][k] = token
@@ -57,21 +59,33 @@ def func():
 
 		# for i in range(n+1):
 		# 	for j in range(n+1):
-		print back[0][n-1]
-		rr = Node('TOP',[])
-		printpath(back,'TOP',0,n-1,rr)
-		t = Tree(rr)
-		t.restore_unit()
-		t.unbinarize()
-		print t
+		elapsed =  timeit.default_timer() - start_time
+		time.append(elapsed*1000000)
+		sen_size.append(n)
+		maxi = -100000000
+		top_word = ''
+		for k,v in dd[0][n-1].iteritems():
+			if v > maxi:
+				top_word = k
+		#print back[0][n-1]
+		if len(top_word) > 0:
+			rr = Node(top_word,[])
+			printpath(back,top_word,0,n-1,rr)
+			t = Tree(rr)
+			t.restore_unit()
+			t.unbinarize()
+			out_file.write(t.__str__()+'\n')
+		else:
+			out_file.write('\n')
 
 def printpath(d,A,i,j,p):
+	#print d
 	st = d[i][j][A].split(' ')
 	if len(st)==3:
 		k = int(st[0])
 		B = st[1]
 		C = st[2]
-		print A, ' ->', B, C
+		#print A, ' ->', B, C
 		left = Node(B,[])
 		right = Node(C,[])
 		p.insert_child(0,left)
@@ -79,8 +93,15 @@ def printpath(d,A,i,j,p):
 		printpath(d,B,i,k,left)
 		printpath(d,C,k+1,j,right)
 	else:
-		print A , ' ->' , st[0]
+		#print A , ' ->' , st[0]
 		terminal = Node(st[0],[])
 		p.insert_child(0,terminal)
 
-func()
+sen_size = []
+time = []
+func(sen_size,time)
+x = np.log(np.array(sen_size))
+y = np.log(np.array(time))
+plt.plot(x,y,'ro')
+plt.axis([0,5,0,10])
+plt.show()

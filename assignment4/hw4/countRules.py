@@ -30,9 +30,8 @@ for key,value in d.iteritems():
 	for k,v in value.iteritems():
 		cnt += v
 	for k in value:
-		value[k] = math.log(value[k]/cnt)
+		value[k] = math.log10(value[k]/cnt)
 		rev_d[k][key] = value[k]
 print rules
-print d['S']
 json.dump(d,open("d.text",'w'))
 json.dump(rev_d,open("rd.text",'w'))
