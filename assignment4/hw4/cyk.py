@@ -15,7 +15,6 @@ import math
 def func(sen_size,time):
 	d = json.load(open("d.text"))
 	rev_d = json.load(open("rd.text"))
-	out_file = open("parse_out.txt",'w')
 	kTOKENIZER = TreebankWordTokenizer()
 
 	for line in fileinput.input():
@@ -74,9 +73,11 @@ def func(sen_size,time):
 			t = Tree(rr)
 			t.restore_unit()
 			t.unbinarize()
-			out_file.write(t.__str__()+'\n')
+			#out_file.write(t.__str__()+'\n')
+			print t.__str__()
 		else:
-			out_file.write('\n')
+			#out_file.write('\n')
+			print
 
 def printpath(d,A,i,j,p):
 	#print d
@@ -97,11 +98,14 @@ def printpath(d,A,i,j,p):
 		terminal = Node(st[0],[])
 		p.insert_child(0,terminal)
 
+def plot(sen_size,time):
+	x = np.log(np.array(sen_size))
+	y = np.log(np.array(time))
+	plt.plot(x,y,'ro')
+	plt.axis([0,5,0,10])
+	plt.show()
+
 sen_size = []
 time = []
 func(sen_size,time)
-x = np.log(np.array(sen_size))
-y = np.log(np.array(time))
-plt.plot(x,y,'ro')
-plt.axis([0,5,0,10])
-plt.show()
+plot(sen_size,time)
