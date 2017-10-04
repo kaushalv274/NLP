@@ -13,7 +13,9 @@ OUTPUT=$3;
 $SCRIPTDIR/preprocess.py < $TRAINING > tmpfile
 $SCRIPTDIR/unknown.py < tmpfile > tmp2file
 $SCRIPTDIR/countRules.py < tmp2file
-$SCRIPTDIR/cyk.py < $INPUT > $OUTPUT
+$SCRIPTDIR/cyk.py < $INPUT > tmp3file
+$SCRIPTDIR/postprocess.py < tmp3file > $OUTPUT
+
 
 #| $SCRIPTDIR/unknown.py > $SCRIPTDIR/tmpfile
 # you should probably do something with the file you just wrote

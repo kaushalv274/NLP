@@ -67,12 +67,14 @@ def func(sen_size,time):
 			if v > maxi:
 				top_word = k
 		#print back[0][n-1]
+		# print dd[0][n-1]
+		# print dd[0][n-1][top_word]
 		if len(top_word) > 0:
 			rr = Node(top_word,[])
 			printpath(back,top_word,0,n-1,rr)
 			t = Tree(rr)
-			t.restore_unit()
-			t.unbinarize()
+			# t.restore_unit()
+			# t.unbinarize()
 			#out_file.write(t.__str__()+'\n')
 			print t.__str__()
 		else:

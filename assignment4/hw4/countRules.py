@@ -23,15 +23,24 @@ for line in fileinput.input():
 			d[ele.label][stt] += 1
 
 rules = 0
-
+max_rule = 0
+max_rule_left = ''
+max_rule_right = ''
 for key,value in d.iteritems():
 	rules += len(value.keys())
 	cnt = 0
 	for k,v in value.iteritems():
 		cnt += v
+		if max_rule < v:
+			max_rule = v
+			max_rule_right = k
+			max_rule_left = key
 	for k in value:
 		value[k] = math.log10(value[k]/cnt)
 		rev_d[k][key] = value[k]
 print rules
+print max_rule
+print max_rule_left
+print max_rule_right
 json.dump(d,open("d.text",'w'))
 json.dump(rev_d,open("rd.text",'w'))
