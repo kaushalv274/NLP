@@ -12,6 +12,9 @@ ans.append(distsim.show_nearest(word_to_vec_dict, word_to_vec_dict['giant'],set(
 ans.append(distsim.show_nearest(word_to_vec_dict, word_to_vec_dict['agree'],set(['agree']),distsim.cossim_dense))
 ans.append(distsim.show_nearest(word_to_vec_dict, word_to_vec_dict['terrorist'],set(['terrorist']),distsim.cossim_dense))
 ans.append(distsim.show_nearest(word_to_vec_dict, word_to_vec_dict['hotel'],set(['hotel']),distsim.cossim_dense))
+ans.append(distsim.show_nearest(word_to_vec_dict, word_to_vec_dict['hospital'],set(['hospital']),distsim.cossim_dense))
+ans.append(distsim.show_nearest(word_to_vec_dict, word_to_vec_dict['seattle'],set(['seattle']),distsim.cossim_dense))
+ans.append(distsim.show_nearest(word_to_vec_dict, word_to_vec_dict['california'],set(['california']),distsim.cossim_dense))
 
 for item in ans:
     print item
