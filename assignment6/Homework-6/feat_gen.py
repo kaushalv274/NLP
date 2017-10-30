@@ -1,4 +1,5 @@
 #!/bin/python
+import nltk
 
 def preprocess_corpus(train_sents):
     """Use the sentences to do whatever preprocessing you think is suitable,
@@ -12,7 +13,7 @@ def preprocess_corpus(train_sents):
     """
     pass
 
-def token2features(sent, i, add_neighs = True):
+def token2features(sent, i, tags, add_neighs = True):
     """Compute the features of a token.
 
     All the features are boolean, i.e. they appear or they do not. For the token,
@@ -31,7 +32,6 @@ def token2features(sent, i, add_neighs = True):
     recursively add the same features, as computed for the neighbors. Of course, we do
     not want to recurse on the neighbors again, and then it is set to False (see code).
     """
-    print "token2features called with ", i, 'for word', sent[i]
     ftrs = []
     # bias
     ftrs.append("BIAS")
@@ -45,6 +45,7 @@ def token2features(sent, i, add_neighs = True):
     word = unicode(sent[i])
     ftrs.append("WORD=" + word)
     ftrs.append("LCASE=" + word.lower())
+
     # some features of the word
     if word.isalnum():
         ftrs.append("IS_ALNUM")
@@ -56,14 +57,22 @@ def token2features(sent, i, add_neighs = True):
         ftrs.append("IS_UPPER")
     if word.islower():
         ftrs.append("IS_LOWER")
+    if word[0].isupper():
+        ftrs.append("FIRST_UPPER")
 
+    #My Code
+    ftrs.append("LENGTH=" + str(len(word)))
+    ftrs.append("POS_TAG=" + tags[i][1])
+    ftrs.append("FIRST_THREE" + word[:3])
+    ftrs.append("LAST_THREE" + word[-3:])
+    
     # previous/next word feats
     if add_neighs:
         if i > 0:
-            for pf in token2features(sent, i-1, add_neighs = False):
+            for pf in token2features(sent, i-1, tags, add_neighs = False):		
                 ftrs.append("PREV_" + pf)
         if i < len(sent)-1:
-            for pf in token2features(sent, i+1, add_neighs = False):
+            for pf in token2features(sent, i+1, tags, add_neighs = False):
                 ftrs.append("NEXT_" + pf)
 
     # return it!
@@ -71,9 +80,10 @@ def token2features(sent, i, add_neighs = True):
 
 if __name__ == "__main__":
     sents = [
-    [ "I", "love", "food" ]
+    [ "I", "love", "food", "What", "is", "Los", "Angeles", "I", "am", "Great"]
     ]
     preprocess_corpus(sents)
     for sent in sents:
+        tags = nltk.pos_tag(sent)
         for i in xrange(len(sent)):
-            print sent[i], ":", token2features(sent, i)
+            print sent[i], ":", token2features(sent, i, tags)

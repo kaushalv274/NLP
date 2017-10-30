@@ -1,5 +1,6 @@
 #!/bin/python
 import feat_gen
+import nltk
 
 class Feats:
     """A handy data structure to compute and index token features.
@@ -54,7 +55,7 @@ class Feats:
         """Get the name of a feature from its index."""
         return self.feats[findex]
 
-    def index_data(self, sents):
+    def index_data(self, sents, labels):
         """Compute and index the features of a corpus of sentences.
 
         Freezes the index after the corpus has been indexed.
@@ -75,9 +76,10 @@ class Feats:
     def index_sent(self, sent):
         """Compute and index the features of a single sentence."""
         sentIdxs = []
+        tags = nltk.pos_tag(sent)
         for i in xrange(len(sent)):
             tokIdxs = []
-            ftrs = self.token2features(sent, i)
+            ftrs = self.token2features(sent, i, tags)
             for ftr in ftrs:
                 idx = self.add_feature(ftr)
                 tokIdxs.append(idx)
@@ -91,7 +93,8 @@ class Feats:
         Assumes that the feature indexes are frozen, i.e. does not
         add any more features.
         """
-        ftrs = self.token2features(sent, i)
+        tags = nltk.pos_tag(sent)
+        ftrs = self.token2features(sent, i, tags)
         fidxs  = []
         for ftr in ftrs:
             if ftr in self.fmap:
