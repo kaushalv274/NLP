@@ -29,6 +29,7 @@ class Feats:
         self.token2features = feat_gen.token2features
         self.preprocess_corpus = feat_gen.preprocess_corpus
         self.num_features = len(self.feats)
+        self.file_map = dict()
 
     def add_feature(self, ftr):
         """Add a new feature to our index."""
@@ -55,7 +56,7 @@ class Feats:
         """Get the name of a feature from its index."""
         return self.feats[findex]
 
-    def index_data(self, sents, labels):
+    def index_data(self, sents):
         """Compute and index the features of a corpus of sentences.
 
         Freezes the index after the corpus has been indexed.
@@ -64,7 +65,7 @@ class Feats:
         features itself is a list of feature indexes (ints) for the token.
         """
         # call the preprocess code
-        self.preprocess_corpus(sents)
+        self.file_map = self.preprocess_corpus(sents)
         # compute and add the feature indices
         idxs = []
         for s in sents:
@@ -79,7 +80,7 @@ class Feats:
         tags = nltk.pos_tag(sent)
         for i in xrange(len(sent)):
             tokIdxs = []
-            ftrs = self.token2features(sent, i, tags)
+            ftrs = self.token2features(sent, i, tags, self.file_map)
             for ftr in ftrs:
                 idx = self.add_feature(ftr)
                 tokIdxs.append(idx)
@@ -94,7 +95,7 @@ class Feats:
         add any more features.
         """
         tags = nltk.pos_tag(sent)
-        ftrs = self.token2features(sent, i, tags)
+        ftrs = self.token2features(sent, i, tags, self.file_map)
         fidxs  = []
         for ftr in ftrs:
             if ftr in self.fmap:

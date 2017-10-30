@@ -1,5 +1,7 @@
 #!/bin/python
 import nltk
+import os
+import string
 
 def preprocess_corpus(train_sents):
     """Use the sentences to do whatever preprocessing you think is suitable,
@@ -11,9 +13,15 @@ def preprocess_corpus(train_sents):
 
     Note that you can also call token2features here to aggregate feature counts, etc.
     """
-    pass
+    file_map = dict()
+    rootdir = 'data/lexicon'
+    for subdir, dirs, files in os.walk(rootdir):
+        for f in files:
+            filepath = subdir + os.sep + f
+            file_map[f] = set(line.strip() for line in open(filepath))
+    return file_map
 
-def token2features(sent, i, tags, add_neighs = True):
+def token2features(sent, i, tags, file_map, add_neighs = True):
     """Compute the features of a token.
 
     All the features are boolean, i.e. they appear or they do not. For the token,
@@ -65,14 +73,46 @@ def token2features(sent, i, tags, add_neighs = True):
     ftrs.append("POS_TAG=" + tags[i][1])
     ftrs.append("FIRST_THREE" + word[:3])
     ftrs.append("LAST_THREE" + word[-3:])
-    
+
+    puncts = set(string.punctuation)
+    punct_cnt = 0
+    digit_cnt = 0
+
+    for c in word:
+        if c in puncts:
+            punct_cnt += 1
+        if c.isdigit():
+            digit_cnt += 1
+    ftrs.append("PUNCT_CNT_" + str(punct_cnt))
+    ftrs.append("DIGIT_CNT_" + str(digit_cnt))
+
+    bi_word = ''
+    tri_word = ''
+    # For bi-words and tri-words
+    if i < len(sent)-1:
+        bi_word = unicode(sent[i]) + unicode(sent[i+1])
+    if i < len(sent)-2:
+        tri_word = unicode(sent[i]) + unicode(sent[i+1]) + unicode(sent[i+2])
+
+    if add_neighs:
+        for f, values in file_map.iteritems():
+            if word in values:
+                ftrs.append("WORD_" + f)
+            if len(bi_word)>0:
+                if bi_word in values:
+                    ftrs.append("BI_WORD_" + f)
+            if len(tri_word)>0:
+                if tri_word in values:
+                    ftrs.append("TRI_WORD_" + f)
+
+
     # previous/next word feats
     if add_neighs:
         if i > 0:
-            for pf in token2features(sent, i-1, tags, add_neighs = False):		
+            for pf in token2features(sent, i-1, tags, file_map, add_neighs = False):		
                 ftrs.append("PREV_" + pf)
         if i < len(sent)-1:
-            for pf in token2features(sent, i+1, tags, add_neighs = False):
+            for pf in token2features(sent, i+1, tags, file_map, add_neighs = False):
                 ftrs.append("NEXT_" + pf)
 
     # return it!
@@ -82,8 +122,8 @@ if __name__ == "__main__":
     sents = [
     [ "I", "love", "food", "What", "is", "Los", "Angeles", "I", "am", "Great"]
     ]
-    preprocess_corpus(sents)
+    file_map = preprocess_corpus(sents)
     for sent in sents:
         tags = nltk.pos_tag(sent)
         for i in xrange(len(sent)):
-            print sent[i], ":", token2features(sent, i, tags)
+            print sent[i], ":", token2features(sent, i, tags, file_map)
