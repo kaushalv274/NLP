@@ -69,7 +69,7 @@ def token2features(sent, i, tags, file_map, add_neighs = True):
         ftrs.append("FIRST_UPPER")
 
     #My Code
-    ftrs.append("LENGTH=" + str(len(word)))
+    #ftrs.append("LENGTH=" + str(len(word)))
     ftrs.append("POS_TAG=" + tags[i][1])
     ftrs.append("FIRST_THREE" + word[:3])
     ftrs.append("LAST_THREE" + word[-3:])
@@ -77,31 +77,36 @@ def token2features(sent, i, tags, file_map, add_neighs = True):
     puncts = set(string.punctuation)
     punct_cnt = 0
     digit_cnt = 0
-
+    caps_cnt = 0
     for c in word:
         if c in puncts:
             punct_cnt += 1
         if c.isdigit():
             digit_cnt += 1
-    ftrs.append("PUNCT_CNT_" + str(punct_cnt))
+        if c.islower():
+            caps_cnt += 1
+
+    #ftrs.append("WORD_LOC_" + str(i))
+    #ftrs.append("PUNCT_CNT_" + str(punct_cnt))
     ftrs.append("DIGIT_CNT_" + str(digit_cnt))
+    ftrs.append("CAPS_CNT_" + str(caps_cnt))
 
     bi_word = ''
     tri_word = ''
     # For bi-words and tri-words
     if i < len(sent)-1:
-        bi_word = unicode(sent[i]) + unicode(sent[i+1])
+        bi_word = unicode(sent[i]) + ' ' +unicode(sent[i+1])
     if i < len(sent)-2:
-        tri_word = unicode(sent[i]) + unicode(sent[i+1]) + unicode(sent[i+2])
+        tri_word = unicode(sent[i]) + ' ' +unicode(sent[i+1]) + ' ' + unicode(sent[i+2])
 
     if add_neighs:
         for f, values in file_map.iteritems():
             if word in values:
                 ftrs.append("WORD_" + f)
-            if len(bi_word)>0:
+            if len(bi_word)>1:
                 if bi_word in values:
                     ftrs.append("BI_WORD_" + f)
-            if len(tri_word)>0:
+            if len(tri_word)>2:
                 if tri_word in values:
                     ftrs.append("TRI_WORD_" + f)
 

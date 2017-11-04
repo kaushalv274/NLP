@@ -16,13 +16,6 @@ def run_viterbi(emission_scores, trans_scores, start_scores, end_scores):
     - s is the score of the best sequence
     - y is a size N array of integers representing the best sequence.
     """
-    print emission_scores
-    print
-    print trans_scores
-    print
-    print start_scores
-    print
-    print end_scores
     L = start_scores.shape[0]
     assert end_scores.shape[0] == L
     assert trans_scores.shape[0] == L
