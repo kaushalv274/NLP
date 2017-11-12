@@ -14,7 +14,9 @@ def preprocess_corpus(train_sents):
     Note that you can also call token2features here to aggregate feature counts, etc.
     """
     file_map = dict()
+
     rootdir = 'data/lexicon'
+    dir2 = 'data/remove'
     for subdir, dirs, files in os.walk(rootdir):
         for f in files:
             filepath = subdir + os.sep + f
@@ -65,14 +67,16 @@ def token2features(sent, i, tags, file_map, add_neighs = True):
         ftrs.append("IS_UPPER")
     if word.islower():
         ftrs.append("IS_LOWER")
+    '''
     if word[0].isupper():
         ftrs.append("FIRST_UPPER")
 
     #My Code
     #ftrs.append("LENGTH=" + str(len(word)))
     ftrs.append("POS_TAG=" + tags[i][1])
-    ftrs.append("FIRST_THREE" + word[:3])
-    ftrs.append("LAST_THREE" + word[-3:])
+    #ftrs.append("FIRST_THREE" + word[:3])
+    #ftrs.append("LAST_THREE" + word[-3:])
+    
 
     puncts = set(string.punctuation)
     punct_cnt = 0
@@ -83,7 +87,7 @@ def token2features(sent, i, tags, file_map, add_neighs = True):
             punct_cnt += 1
         if c.isdigit():
             digit_cnt += 1
-        if c.islower():
+        if not c.islower():
             caps_cnt += 1
 
     #ftrs.append("WORD_LOC_" + str(i))
@@ -93,11 +97,15 @@ def token2features(sent, i, tags, file_map, add_neighs = True):
 
     bi_word = ''
     tri_word = ''
+    #q_word = ''
     # For bi-words and tri-words
     if i < len(sent)-1:
         bi_word = unicode(sent[i]) + ' ' +unicode(sent[i+1])
     if i < len(sent)-2:
         tri_word = unicode(sent[i]) + ' ' +unicode(sent[i+1]) + ' ' + unicode(sent[i+2])
+
+    #if i < len(sent)-3:
+        #q_word = unicode(sent[i]) + ' ' +unicode(sent[i+1]) + ' ' + unicode(sent[i+2]) + ' ' + unicode(sent[i+3])
 
     if add_neighs:
         for f, values in file_map.iteritems():
@@ -109,8 +117,10 @@ def token2features(sent, i, tags, file_map, add_neighs = True):
             if len(tri_word)>2:
                 if tri_word in values:
                     ftrs.append("TRI_WORD_" + f)
+            #if q_word in values:
+                    #ftrs.append("Q_WORD_" + f)
 
-
+    '''
     # previous/next word feats
     if add_neighs:
         if i > 0:
