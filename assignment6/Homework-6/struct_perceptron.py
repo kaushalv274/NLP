@@ -86,7 +86,7 @@ class StructuredPerceptron:
         http://www.aclweb.org/anthology-new/W/W02/W02-1001.pdf
     """
     def __init__(self, model, max_iter=100, verbose=0, batch=False,
-                 decay_exponent=0, decay_t0=10, average=False, n_jobs=1,
+                 decay_exponent=-0.96, decay_t0=5, average=False, n_jobs=1,
                  logger=None):
         self.model = model
         self.max_iter = max_iter
